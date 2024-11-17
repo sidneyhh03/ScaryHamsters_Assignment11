@@ -21,10 +21,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CSVpackage\CSVProcessor.py">
+    <Compile Include="CSVPackage\CSVProcessor.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CSVpackage\__init__.py">
+    <Compile Include="CSVPackage\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MainPackage\__init__.py">
@@ -33,7 +33,7 @@
     <Compile Include="MainPackage\main.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CSVpackage\" />
+    <Folder Include="CSVPackage\" />
     <Folder Include="MainPackage\" />
     <Folder Include="Data\" />
   </ItemGroup>

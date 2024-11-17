@@ -15,7 +15,7 @@
 # main.py
 
 
-from CSVPackage.CSVProcessor import *
+from CSVpackage.CSVProcessor import CSVProcessor
 
 if __name__ == "__main__":
     print("main.py")
