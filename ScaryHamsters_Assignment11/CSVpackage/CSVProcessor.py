@@ -9,6 +9,8 @@
 import csv
 import requests
 import re 
+#import pandas as pd
+
 
 class CSVProcessor:
         
@@ -26,7 +28,8 @@ class CSVProcessor:
             self.format_gross_price(data)
             self.remove_duplicates(data)
             self.handle_non_fuel_purchases(data)
-            #self.update_addresses_with_zip_codes(data)
+            #self.update_addresses_with_zip(data)
+            self.fetch_zip_code(data)
             #write updates to new csv files in Data folder
             self.write_to_csv(data, "Data/cleanedData.csv")
             self.write_to_csv(self.anomalies, "Data/dataAnomalies.csv")  
@@ -67,61 +70,26 @@ class CSVProcessor:
         else: #column not found
             print("Warning: 'Fuel Type' column not found. Skipping anomaly processing.")
 
-    def update_addresses_with_zip_codes(self, data):
+    def fetch_zip_code(self, data):
         for row in data:
-            if not row.get('ZIP Code'):  # Check if ZIP Code is missing
+            if not row.get('Zip Code'):
                 city = row.get('City', '').strip()
                 state = row.get('State', '').strip()
                 if city and state:
-                    zip_code = self.fetch_zip_code(city, state)
-                    if zip_code:
-                        row['ZIP Code'] = zip_code
-                    else:
-                        print(f"Could not find ZIP Code for {city}, {state}")
-
-    def fetch_zip_code(self, city, state):
-        params = {
-            "apikey": self.api_key,
-            "city": city,
-            "state": state,
-            "country": "US"
-        }
-        try:
-            response = requests.get(self.api_base_url, params=params)
-            if response.status_code == 200:
-                data = response.json()
-                zip_codes = data.get("results", {}).get(city, [])
-                if zip_codes:
-                    return zip_codes[0]  # Return the first ZIP code found
-            else:
-                print(f"API error: {response.status_code} - {response.text}")
-        except requests.RequestException as e:
-            print(f"Error connecting to API: {e}")
-        return None
+                    try:
+                        response = requests.get(
+                            f"{self.api_base_url}/search",
+                            params={"apikey": self.api_key, "city": city, "state": state},
+                            timeout=10
+                        )
+                        response.raise_for_status()
+                        zip_codes = response.json().get('results', {}).get(city, [])
+                        if zip_codes:
+                            row['Zip Code'] = zip_codes[0]
+                    except requests.exceptions.RequestException as e:
+                        print(f"Error fetching zip code for {city}, {state}: {e}")
 
 #-----------------------------------
-    def write_to_csv(self, data, output_file):
-        # Check if there is any data to write
-        if data:
-            # Get the keys from the first dictionary as headers
-            keys = data[0].keys()
-        
-            # Format all numbers to two decimal places as strings in the data
-            formatted_data = []
-            for row in data:
-                formatted_row = {k: f"{v:.2f}" if isinstance(v, float) else v for k, v in row.items()}
-                formatted_data.append(formatted_row)
-        
-            # Write the formatted data to the CSV file
-            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
-                writer = csv.DictWriter(file, fieldnames=keys)
-                writer.writeheader()
-                writer.writerows(formatted_data)
-        else:
-            # If no data is provided, create an empty file
-            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
-                pass
-"""
     def write_to_csv(self, data, output_file):
         # Write data to CSV, including headers dynamically
         if data:
@@ -135,4 +103,4 @@ class CSVProcessor:
             with open(output_file, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow([])  # Empty header
-                """
+                
