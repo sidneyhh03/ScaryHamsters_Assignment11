@@ -11,6 +11,10 @@ import requests
 import re 
 
 class CSVProcessor:
+    """
+    Cleans data in FuelPurchaseData csv file and writes changes to new csv file, and anomilies to another 
+    
+    """
         
     def __init__(self, filename):
         self.__filename = filename
