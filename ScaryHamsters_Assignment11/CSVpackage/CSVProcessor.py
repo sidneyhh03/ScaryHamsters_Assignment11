@@ -66,6 +66,39 @@ class CSVProcessor:
             data[:] = [row for row in data if row.get('Fuel Type', '').strip().lower() != 'pepsi']
         else: #column not found
             print("Warning: 'Fuel Type' column not found. Skipping anomaly processing.")
+
+    def update_addresses_with_zip_codes(self, data):
+        for row in data:
+            if not row.get('ZIP Code'):  # Check if ZIP Code is missing
+                city = row.get('City', '').strip()
+                state = row.get('State', '').strip()
+                if city and state:
+                    zip_code = self.fetch_zip_code(city, state)
+                    if zip_code:
+                        row['ZIP Code'] = zip_code
+                    else:
+                        print(f"Could not find ZIP Code for {city}, {state}")
+
+    def fetch_zip_code(self, city, state):
+        params = {
+            "apikey": self.api_key,
+            "city": city,
+            "state": state,
+            "country": "US"
+        }
+        try:
+            response = requests.get(self.api_base_url, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                zip_codes = data.get("results", {}).get(city, [])
+                if zip_codes:
+                    return zip_codes[0]  # Return the first ZIP code found
+            else:
+                print(f"API error: {response.status_code} - {response.text}")
+        except requests.RequestException as e:
+            print(f"Error connecting to API: {e}")
+        return None
+
 #-----------------------------------
     def write_to_csv(self, data, output_file):
         # Check if there is any data to write
