@@ -26,7 +26,7 @@ class CSVProcessor:
             self.format_gross_price(data)
             self.remove_duplicates(data)
             self.handle_non_fuel_purchases(data)
-            self.update_addresses_with_zip_codes(data)
+            #self.update_addresses_with_zip_codes(data)
             #write updates to new csv files in Data folder
             self.write_to_csv(data, "Data/cleanedData.csv")
             self.write_to_csv(self.anomalies, "Data/dataAnomalies.csv")  
@@ -68,6 +68,28 @@ class CSVProcessor:
             print("Warning: 'Fuel Type' column not found. Skipping anomaly processing.")
 #-----------------------------------
     def write_to_csv(self, data, output_file):
+        # Check if there is any data to write
+        if data:
+            # Get the keys from the first dictionary as headers
+            keys = data[0].keys()
+        
+            # Format all numbers to two decimal places as strings in the data
+            formatted_data = []
+            for row in data:
+                formatted_row = {k: f"{v:.2f}" if isinstance(v, float) else v for k, v in row.items()}
+                formatted_data.append(formatted_row)
+        
+            # Write the formatted data to the CSV file
+            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.DictWriter(file, fieldnames=keys)
+                writer.writeheader()
+                writer.writerows(formatted_data)
+        else:
+            # If no data is provided, create an empty file
+            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+                pass
+"""
+    def write_to_csv(self, data, output_file):
         # Write data to CSV, including headers dynamically
         if data:
             keys = data[0].keys()
@@ -80,3 +102,4 @@ class CSVProcessor:
             with open(output_file, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow([])  # Empty header
+                """
