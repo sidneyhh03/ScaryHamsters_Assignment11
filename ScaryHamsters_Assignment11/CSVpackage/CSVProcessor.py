@@ -18,14 +18,24 @@ class CSVProcessor:
     """
         
     def __init__(self, filename):
+        """
+        Initializes instance of CSVProcessor class
+        @param self: the instance of the class
+        @param filename: string specifying the path to the csv file being processed
+        """
         self.__filename = filename
         self.cleaned_data = []
         self.anomalies = []
-        self.api_key = "16c9b3c0-a7c6-11ef-b2b1-09753b90d033"  
+        self.api_key = "8510a400-a7cf-11ef-9e53-29f24329e12a"  
         self.api_base_url = "https://app.zipcodebase.com/api/v1/code/city"
 
    
     def process(self):
+        """
+        Executes the data processing
+        @param self: the instance of the class and the necessary methods
+        @return: None. writes processed data to csv files
+        """
         data = self.readData()
         if data:
             self.format_gross_price(data)
@@ -36,6 +46,12 @@ class CSVProcessor:
             self.write_to_csv(self.anomalies, "Data/dataAnomalies.csv")
 
     def readData(self):
+        """
+        Reads the data from the csv file
+        @param self: the instance of the class, which is the file to read
+        @return:A list of dictionaries representing the rows in the csv file
+        or none if file isn't found
+        """
         try:
             with open(self.__filename, mode='r', newline='', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
@@ -46,6 +62,12 @@ class CSVProcessor:
             return None
         
     def format_gross_price(self, data):
+        """
+        Formats the "Gross Price" column to two decimal places
+        @param self: the instance of the class
+        @param data: A list of dictionaries that represents the rows
+        @return: None. Method modifies the csv file
+        """
         for row in data:
             if 'Gross Price' in row:
                 try:
@@ -54,6 +76,12 @@ class CSVProcessor:
                     print(f"Invalid Gross Price value: {row['Gross Price']} in row {row}")
             
     def remove_duplicates(self, data):
+        """
+        Removes duplicated rows from the data in the csv file
+        @param self: the instance of the class
+        @param data: A list of dictionaries that represents the rows
+        @return: None. Method updates the `data` list in place with only unique rows
+        """
         unique_data = []
         seen = set()
         for row in data:
@@ -65,27 +93,19 @@ class CSVProcessor:
         data.extend(unique_data)
         
     def handle_non_fuel_purchases(self, data):
+        """
+        Identifies non-fuel values in "Fuel Type" row and removes from original dataset
+        @param self: the instance of the class
+        @param data: A list of dictionaries that represents the rows
+        @return: None. Method updates the `data` list by removing "non-fuel" purchases
+        """
         if 'Fuel Type' in data[0]:  # Check if 'Fuel Type' column exists
             self.anomalies = [row for row in data if row.get('Fuel Type', '').strip().lower() == 'pepsi']
             data[:] = [row for row in data if row.get('Fuel Type', '').strip().lower() != 'pepsi']
         else: #column not found
             print("Warning: 'Fuel Type' column not found. Skipping anomaly processing.")
 
-def write_to_csv(self, data, output_file):
-        # Write data to CSV, including headers dynamically
-        if data:
-            keys = data[0].keys()
-            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
-                writer = csv.DictWriter(file, fieldnames=keys)
-                writer.writeheader()
-                writer.writerows(data)
-        else:
-            # If there's no data, create an empty file with headers
-            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerow([])  # Empty header
-#-----------------------
-"""
+#-----------------
     def update_addresses_with_zip_codes(self, data):
         for row in data:
             if 'Full Address' in row:
@@ -112,20 +132,48 @@ def write_to_csv(self, data, output_file):
 
     def fetch_zip_code(self, city_state):
         try:
+            # Adding the country parameter (United States)
             response = requests.get(
                 self.api_base_url,
-                params={"apikey": self.api_key, "city_state": city_state}
+                params={
+                    "apikey": self.api_key,
+                    "city": city_state.split(',')[0].strip(),  # City
+                    "state": city_state.split(',')[1].strip(),  # State
+                    "country": "US"  # Hardcoded as United States
+                }
             )
             if response.status_code == 200:
                 data = response.json()
+                # Assuming the response returns results like this:
+                # data['results']['city,state'][0]
                 zip_codes = data.get('results', {}).get(city_state, [])
                 if zip_codes:
-                    return zip_codes[0]  # Return the first zip code
+                    return zip_codes[0]  # Return the first zip code found
+                else:
+                    print(f"No zip code found for {city_state}.")
             else:
                 print(f"Error fetching zip code for {city_state}: {response.text}")
         except Exception as e:
-            print(f"Exception occurred during API call: {e}")
+            print(f"Exception occurred during API call for {city_state}: {e}")
         return None
-        """
-    #-----------------------------------
+
+#------------------------------
+def write_to_csv(self, data, output_file):
+        # Write data to CSV, including headers dynamically
+        if data:
+            keys = data[0].keys()
+            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.DictWriter(file, fieldnames=keys)
+                writer.writeheader()
+                writer.writerows(data)
+        else:
+            # If there's no data, create an empty file with headers
+            with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow([])  # Empty header
+
+
+    
+        
+
     
