@@ -38,6 +38,8 @@
     <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\cleanedData.csv" />
+    <Content Include="Data\dataAnomalies.csv" />
     <Content Include="Data\fuelPurchaseData.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

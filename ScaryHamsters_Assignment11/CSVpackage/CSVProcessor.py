@@ -1,7 +1,13 @@
-
-# Brief Description of what this module does.   
+# Name: Sidney Huschart, Shelby Sash, Roman Stryjewski, Cheikh Abdoul
+# email:  huschash@mail.uc.edu, sashsk@mail.uc.edu, sashsk@mail.uc.edu, abdoulch@mail.uc.edu
+# Assignment Number: Assignment 11
+# Due Date:   November 21 2024
+# Course #/Section:   IS4010-001
+# Semester/Year:   Fall 2024
+# Brief Description of the assignment: Collaborate using github to clean data in a csv file
+# Brief Description of what this module does: Wrote the code to clean up the  data in FuelPurchaseData csv file. Crested two new files with new sets of data.
 # Citations:
-# Anything else that's relevant: 
+# Anything else that's relevant:
 
 
 # CSVProcessor.py
@@ -13,13 +19,12 @@ import time
 
 class CSVProcessor:
     """
-    Cleans data in FuelPurchaseData csv file and writes changes to new csv file, and anomilies to another 
-    
+     
     """
         
     def __init__(self, filename):
         """
-        Initializes instance of CSVProcessor class
+        Initializes instance of CSVProcessor class 
         @param self: the instance of the class
         @param filename: string specifying the path to the csv file being processed
         """
@@ -31,12 +36,8 @@ class CSVProcessor:
 
    
     def process(self):
-        """
-        Executes the data processing
-        @param self: the instance of the class and the necessary methods
-        @return: None. writes processed data to csv files
-        """
-        data = self.readData()
+        #print("Processing", self.__filename)
+        data = self.readData() #reads data from file
         if data:
             self.format_gross_price(data)
             self.remove_duplicates(data)
@@ -46,12 +47,6 @@ class CSVProcessor:
             self.write_to_csv(self.anomalies, "Data/dataAnomalies.csv")
 
     def readData(self):
-        """
-        Reads the data from the csv file
-        @param self: the instance of the class, which is the file to read
-        @return:A list of dictionaries representing the rows in the csv file
-        or none if file isn't found
-        """
         try:
             with open(self.__filename, mode='r', newline='', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
