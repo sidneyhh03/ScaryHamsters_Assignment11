@@ -163,5 +163,3 @@ class CSVProcessor:
             with open(output_file, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow([])  # Empty header
-
-        #files should be converted into csv files
