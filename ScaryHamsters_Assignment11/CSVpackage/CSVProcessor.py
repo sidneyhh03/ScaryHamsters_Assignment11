@@ -90,7 +90,7 @@ class CSVProcessor:
                 seen.add(row_tuple)
                 unique_data.append(row)
         data.clear()
-        data.extend(unique_data)
+        data.extend(unique_data) 
         
     def handle_non_fuel_purchases(self, data):
         """
