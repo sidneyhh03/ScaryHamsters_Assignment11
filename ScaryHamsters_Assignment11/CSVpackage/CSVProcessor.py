@@ -100,7 +100,7 @@ class CSVProcessor:
         else: #column not found
             print("Warning: 'Fuel Type' column not found. Skipping anomaly processing.")
 
-    def write_to_csv(self, data, output_file):
+    def write_to_csv(self, data, output_file): 
         """
         Writes data to a csv file
         @param self: the instance of the class
