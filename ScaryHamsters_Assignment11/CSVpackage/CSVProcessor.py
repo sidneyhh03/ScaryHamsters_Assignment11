@@ -6,7 +6,7 @@
 # Semester/Year:   Fall 2024
 # Brief Description of the assignment: Collaborate using github to clean data in a csv file
 # Brief Description of what this module does: Wrote the code to clean up the  data in FuelPurchaseData csv file. Crested two new files with new sets of data.
-# Citations:
+# Citations: chatgpt, copilot, perplexity ai, stackoverflow, reddit
 # Anything else that's relevant:
 
 
@@ -19,7 +19,7 @@ import time
 
 class CSVProcessor:
     """
-     
+    Processes data in FuelPurchaseData csv and cleans that data and writes to new csv files
     """
         
     def __init__(self, filename):
@@ -36,6 +36,11 @@ class CSVProcessor:
 
    
     def process(self):
+        """
+        Executes the data processing
+        @param self: the instance of the class and the necessary methods
+        @return: None. writes processed data to csv files
+        """
         #print("Processing", self.__filename)
         data = self.readData() #reads data from file
         if data:
@@ -121,6 +126,7 @@ class CSVProcessor:
                 writer = csv.writer(file)
                 writer.writerow([])  # Empty header
 #-----------------
+#This zip code stuff doesnt work we struggled 
 """
     def update_addresses_with_zip_codes(self, data):
         for row in data:

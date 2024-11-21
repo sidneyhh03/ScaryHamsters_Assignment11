@@ -7,7 +7,7 @@
 # Semester/Year:   Fall 2024
 # Brief Description of the assignment: Collaborate using github to clean data in a csv file
 # Brief Description of what this module does: The entry point for the project  
-# Citations:
+# Citations: chat gpt
 # Anything else that's relevant:
 
 
