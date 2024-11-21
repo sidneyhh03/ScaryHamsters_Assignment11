@@ -113,7 +113,7 @@ class CSVProcessor:
         @param output_file: A string specifying gthe path to the output file
         @return: None. Method writes data to specified csv file
         """
-        # Write data to CSV, including headers dynamically
+        # Write data to CSV, including headers dynamically 
         if data:
             keys = data[0].keys()
             with open(output_file, mode='w', newline='', encoding='utf-8') as file:
