@@ -1,6 +1,6 @@
 
 # Name: Sidney Huschart, Shelby Sash, Roman Stryjewski, Cheikh Abdoul
-# email:  {required}
+# email:  huschash@mail.uc.edu, sashsk@mail.uc.edu, sashsk@mail.uc.edu, abdoulch@mail.uc.edu
 # Assignment Number: Assignment 11
 # Due Date:   November 21 2024
 # Course #/Section:   IS4010-001
