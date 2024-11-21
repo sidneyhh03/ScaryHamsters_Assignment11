@@ -7,7 +7,7 @@
 # Brief Description of the assignment: Collaborate using github to clean data in a csv file
 # Brief Description of what this module does: Wrote the code to clean up the  data in FuelPurchaseData csv file. Crested two new files with new sets of data.
 # Citations: chatgpt, copilot, perplexity ai, stackoverflow, reddit
-# Anything else that's relevant:
+# Anything else that's relevant: n/a
 
 
 # CSVProcessor.py
@@ -52,6 +52,12 @@ class CSVProcessor:
             self.write_to_csv(self.anomalies, "Data/dataAnomalies.csv")
 
     def readData(self):
+        """
+        Reads the data from the csv file
+        @param self: the instance of the class, which is the file to read
+        @return:A list of dictionaries representing the rows in the csv file
+        or none if file isn't found
+        """
         try:
             with open(self.__filename, mode='r', newline='', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
