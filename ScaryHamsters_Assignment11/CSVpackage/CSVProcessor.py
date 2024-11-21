@@ -9,8 +9,7 @@
 import csv
 import requests
 import re 
-#import pandas as pd
-
+import time
 
 class CSVProcessor:
     """
@@ -22,21 +21,19 @@ class CSVProcessor:
         self.__filename = filename
         self.cleaned_data = []
         self.anomalies = []
-        self.api_key = "4a2979c0-a4a2-11ef-a907-953b7a3c587f"  
-        self.api_base_url = "https://app.zipcodebase.com/api/v1/status"
+        self.api_key = "16c9b3c0-a7c6-11ef-b2b1-09753b90d033"  
+        self.api_base_url = "https://app.zipcodebase.com/api/v1/code/city"
+
    
     def process(self):
-        #print("Processing", self.__filename)
-        data = self.readData() #reads data from file
+        data = self.readData()
         if data:
             self.format_gross_price(data)
             self.remove_duplicates(data)
             self.handle_non_fuel_purchases(data)
-            #self.update_addresses_with_zip(data)
-            self.fetch_zip_code(data)
-            #write updates to new csv files in Data folder
+            self.update_addresses_with_zip_codes(data)
             self.write_to_csv(data, "Data/cleanedData.csv")
-            self.write_to_csv(self.anomalies, "Data/dataAnomalies.csv")  
+            self.write_to_csv(self.anomalies, "Data/dataAnomalies.csv")
 
     def readData(self):
         try:
@@ -74,27 +71,7 @@ class CSVProcessor:
         else: #column not found
             print("Warning: 'Fuel Type' column not found. Skipping anomaly processing.")
 
-    def fetch_zip_code(self, data):
-        for row in data:
-            if not row.get('Zip Code'):
-                city = row.get('City', '').strip()
-                state = row.get('State', '').strip()
-                if city and state:
-                    try:
-                        response = requests.get(
-                            f"{self.api_base_url}/search",
-                            params={"apikey": self.api_key, "city": city, "state": state},
-                            timeout=10
-                        )
-                        response.raise_for_status()
-                        zip_codes = response.json().get('results', {}).get(city, [])
-                        if zip_codes:
-                            row['Zip Code'] = zip_codes[0]
-                    except requests.exceptions.RequestException as e:
-                        print(f"Error fetching zip code for {city}, {state}: {e}")
-
-#-----------------------------------
-    def write_to_csv(self, data, output_file):
+def write_to_csv(self, data, output_file):
         # Write data to CSV, including headers dynamically
         if data:
             keys = data[0].keys()
@@ -107,4 +84,48 @@ class CSVProcessor:
             with open(output_file, mode='w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow([])  # Empty header
-                
+#-----------------------
+"""
+    def update_addresses_with_zip_codes(self, data):
+        for row in data:
+            if 'Full Address' in row:
+                full_address = row['Full Address']
+                if not re.search(r'\b\d{5}\b', full_address):  # Check for a 5-digit zip code
+                    city_state = self.extract_city_state(full_address)
+                    if city_state:
+                        zip_code = self.fetch_zip_code(city_state)
+                        if zip_code:
+                            row['Full Address'] += f", {zip_code}"
+
+    def extract_city_state(self, full_address):
+        # Simplistic approach: assuming addresses are formatted as "Street, City, State"
+        try:
+            parts = full_address.split(",")
+            if len(parts) >= 2:
+                city = parts[-2].strip()
+                state = parts[-1].strip()
+                return f"{city},{state}"
+            return None
+        except Exception as e:
+            print(f"Error extracting city and state from address '{full_address}': {e}")
+            return None
+
+    def fetch_zip_code(self, city_state):
+        try:
+            response = requests.get(
+                self.api_base_url,
+                params={"apikey": self.api_key, "city_state": city_state}
+            )
+            if response.status_code == 200:
+                data = response.json()
+                zip_codes = data.get('results', {}).get(city_state, [])
+                if zip_codes:
+                    return zip_codes[0]  # Return the first zip code
+            else:
+                print(f"Error fetching zip code for {city_state}: {response.text}")
+        except Exception as e:
+            print(f"Exception occurred during API call: {e}")
+        return None
+        """
+    #-----------------------------------
+    
